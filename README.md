@@ -1,42 +1,73 @@
 #  Yapay Sinir Ağları ile Banknote Sahteciliği Tespiti  
 
-## 1. Giriş  
-Bu proje, banknotların sahte olup olmadığını belirlemek için farklı Çok Katmanlı Algılayıcı (MLP) modellerinin karşılaştırmasını içermektedir.
+## Giriş
+Bu çalışma, Kaggle'dan alınan "BankNote_Authentication" veri seti kullanılarak sahte banknotları tespit etmek amacıyla geliştirilmiş çok katmanlı algılayıcı (MLP) modellerini içermektedir. Model, hem özel olarak implemente edilmiş bir MLP modeli hem de Scikit-learn ve PyTorch kütüphaneleri kullanılarak eğitilmiş farklı MLP yapıları ile karşılaştırılmıştır. Çalışmanın amacı, farklı aktivasyon fonksiyonları ve model yapılarını kullanarak en iyi doğruluk oranını elde etmektir.
 
-## 2. Yöntem  
-Çalışmada **BankNote Authentication** veri seti kullanılmıştır. Veriler eğitim ve test kümelerine ayrılmış ve özellikler standartlaştırılmıştır.  
+## Metod
+### Veri Seti ve Ön İşleme
+- Veri seti, dört özellik ve bir sınıf etiketinden oluşmaktadır.
+- Veriler normalizasyon için **StandardScaler** ile ölçeklendirilmiştir.
+- Eğitim ve test verileri **train_test_split** ile %80 eğitim, %20 test olarak ayrılmıştır.
 
-**Modeller:**  
-- **1 Gizli Katmanlı :** Tanh ve ReLU aktivasyon fonksiyonları ile
-- **2 Gizli Katmanlı:** Tanh ve ReLU aktivasyon fonksiyonları ile 
- 
+### Model Yapıları
+#### 1. Özel MLP Implementasyonu
+- Model, bir ve iki gizli katmanlı (5-5 nöron) yapılarla eğitildi.
+- Aktivasyon fonksiyonları olarak **Tanh** ve **ReLU** kullanıldı.
+- Optimizasyon algoritması olarak **SGD (Stochastic Gradient Descent)** tercih edildi.
+- Kayıp fonksiyonu olarak **Binary Cross Entropy** kullanıldı.
 
-**Hiperparametreler:**  
-- Öğrenme oranı: `0.1`  
-- Aktivasyon fonksiyonları: `Tanh`, `ReLU`  
-- Katman sayısı: `2 ve 3`  
-- Eğitim süresi: `400 epoch`  
+#### 2. Scikit-learn MLP Modeli
+- **MLPClassifier** kullanılarak gizli katman sayısı ve aktivasyon fonksiyonları aynı olacak şekilde model eğitildi.
 
-**Değerlendirme Metrikleri:**  
-- Doğruluk (Accuracy)  
-- Sınıflandırma Raporu (Precision, Recall, F1-score)  
+#### 3. PyTorch MLP Modeli
+- **PyTorch** kullanılarak MLP modeli oluşturuldu.
+- Aynı gizli katman ve aktivasyon fonksiyonları ile eğitildi.
+- **SGD** optimizasyon algoritması ve **Binary Cross Entropy Loss** fonksiyonu kullanıldı.
 
-## 3. Sonuçlar  
-Aşağıda farklı modellerin doğruluk (accuracy) değerleri verilmiştir:  
+### Değerlendirme Kriterleri
+- **Accuracy (Doğruluk)**
+- **Confusion Matrix (Karmaşıklık Matrisi)**
+- **Precision, Recall ve F1-score** değerleri hesaplandı.
 
-| Model | 1 Katman (Tanh) | 2 Katman (Tanh) | 1 Katman (ReLU) | 2 Katman (ReLU) |  
-|--------|---------------|---------------|---------------|---------------|  
-|  MLP | **%0.9891** | **%0.9927** | **%0.9891** | **%0.9927** |  
- 
+## Sonuçlar
+### Özel MLP Modeli Karşılaştırması
+| Model | Aktivasyon | Accuracy |
+|--------|-------------|-----------|
+| 1 Hidden Layer | Tanh | **0.9891** |
+| 1 Hidden Layer | ReLU | **0.9891** |
+| 2 Hidden Layers | Tanh | **0.9927** |
+| 2 Hidden Layers | ReLU | **0.9927** |
 
-## 4. Tartışma  
-Sonuçlara göre:  
+
+### Scikit-learn ve PyTorch Modelleri
+**Scikit-learn MLP Modeli:**
+- Accuracy: **0.9927**
+- Confusion Matrix:
+  ```
+  [[151   2]
+   [  0 122]]
+  ```
+- F1-score: **0.99**
+
+**PyTorch MLP Modeli:**
+- Accuracy: **0.9927**
+- Confusion Matrix:
+  ```
+  [[151   2]
+   [  0 122]]
+  ```
+- F1-score: **0.99**
+
+Her iki model de oldukça yüksek doğruluk oranına ulaşmış ve birbirine yakın sonuçlar vermiştir.
+
+## Tartışma
+Sonuçlara göre: 
+- **İki farklı framework (Scikit-learn ve PyTorch) ile aynı model yapısının benzer sonuçlar vermesi**, modelin tutarlılığını gösterir. 
 - **Tanh aktivasyonu**, küçük veri setlerinde daha istikrarlı sonuçlar vermiştir.  
 - **ReLU aktivasyonu**, derin ağlarda daha iyi performans göstermiştir.  
-- **İki katmanlı modeller**, tek katmanlı modellere kıyasla genellikle daha iyi performans göstermiştir.  
+- **İki katmanlı modeller**, tek katmanlı modellere kıyasla genellikle daha iyi performans göstermiştir. 
+## Referanslar
+1. Banknote Authentication Data Set - Kaggle: https://www.kaggle.com/datasets/ritesaluja/bank-note-authentication-uci-data
+2. Scikit-learn MLPClassifier: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html
+3. PyTorch Documentation: https://pytorch.org/docs/stable/index.html
 
-
-## 5. Referanslar  
-- [Banknote Authentication Dataset](https://archive.ics.uci.edu/ml/datasets/banknote+authentication)  
-- Hastie, T., Tibshirani, R., & Friedman, J. (2009). The Elements of Statistical Learning.  
-- Goodfellow, I., Bengio, Y., & Courville, A. (2016). Deep Learning.  
